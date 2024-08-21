@@ -1,7 +1,22 @@
-import { Button } from 'flowbite-react'
+import {BrowserRouter,Routes,Route} from 'react-router-dom'
+import Home from './pages/Home'
+import Project from './pages/Project'
+import About from './pages/About'
+import SingIn from './pages/SingIn'
+import Singup from './pages/Singup'
+
+
 
 export default function App() {
   return (
-    <Button gradientDuoTone='purpleToPink' className='text-red-600 font-bold'>App</Button>
+    <BrowserRouter>
+    <Routes>
+      <Route path='/' element={<Home/>}/>
+      <Route path='/project' element={<Project/>}/>
+      <Route path='/about' element={<About/>}/>
+      <Route path='/sing-in' element={<SingIn/>}/>
+      <Route path='/sing-up' element={<Singup/>}/>
+    </Routes>
+    </BrowserRouter>
   )
 }
