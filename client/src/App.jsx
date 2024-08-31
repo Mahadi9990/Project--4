@@ -5,6 +5,7 @@ import About from './pages/About'
 import SingIn from './pages/SingIn'
 import Singup from './pages/Singup'
 import Header from './components/Header'
+import Fotter from './components/Fotter'
 
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       <Route path='/sing-in' element={<SingIn/>}/>
       <Route path='/sing-up' element={<Singup/>}/>
     </Routes>
+    <Fotter/>
     </BrowserRouter>
   )
 }
