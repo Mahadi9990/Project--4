@@ -1,12 +1,13 @@
-import {Button, Navbar, TextInput} from 'flowbite-react'
+import {Avatar, Button, Dropdown, Navbar, TextInput} from 'flowbite-react'
 import { Link ,useLocation} from 'react-router-dom'
 import { FaSearch } from "react-icons/fa";
 import { FaMoon } from "react-icons/fa6";
-
+import { useSelector } from 'react-redux';
 
 
 
 export default function Header() {
+    const {currentUser} =useSelector((state)=>state.user)
     const path =useLocation().pathname
   return (
     <Navbar className='flex flex-row gap-2'>
@@ -33,7 +34,34 @@ export default function Header() {
         </form>
         <div className="flex justify-center items-center gap-2 md:order-2">
             <Button color='gray' pill className='w-12 h-10'><FaMoon/></Button>
-            <Link to='/sing-in'><Button gradientDuoTone='purpleToBlue' outline>Sing in</Button></Link>
+            {currentUser?(
+                <Dropdown
+                    arrowIcon={false}
+                    inline
+                    label={
+                        <Avatar
+                            img={currentUser.avater}
+                            rounded
+                            size='sm'
+                        />
+                    }
+                >
+                    <Dropdown.Header>
+                        <span>@{currentUser.userName}</span><br />
+                        <span className='pt-2 truncate'>{currentUser.email}</span>
+                    </Dropdown.Header>
+                    <Link to='/dashboard?tab=profile'>
+                        <Dropdown.Item>
+                            Profile
+                        </Dropdown.Item>
+                    </Link>
+                    <Dropdown.Item>
+                        Sing Out
+                    </Dropdown.Item>
+                </Dropdown>
+            ):(
+              <Link to='/sing-in'><Button gradientDuoTone='purpleToBlue' outline>Sing in</Button></Link>
+            )}
             <Navbar.Toggle/>
         </div>
         <Navbar.Collapse>
