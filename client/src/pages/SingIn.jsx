@@ -2,11 +2,12 @@ import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
 import { useState } from 'react';
 import {Link, useNavigate} from 'react-router-dom'
 import Outh from '../components/Outh';
-
+import { useDispatch } from 'react-redux'
+import { singInStart,singInSuccess,singInFailuar } from '../redux/user/userSlice';
 
 
 export default function Singin() {
-  
+  const dispatch =useDispatch()
   const [formData, setformData] = useState({});
   const [errorMessage, seterrorMessage] = useState(null);
   const [loading, setloading] = useState(false);
@@ -22,8 +23,7 @@ export default function Singin() {
       return seterrorMessage("Please fill up add inputs")
     }
     try {
-      setloading(true)
-      seterrorMessage(null)
+      dispatch(singInStart())
       const res = await fetch('/api/user/sing-in', {
         method: "POST",
         headers: {
@@ -35,16 +35,13 @@ export default function Singin() {
       const data = await res.json()
       
       if (data.success === false) {
-        seterrorMessage(data.message)
-        setloading(false)
-        return
+        dispatch(singInFailuar(data.message))
       }
-      setloading(false)
+      dispatch(singInSuccess(data))
       navigate('/')
       
     } catch (error) {
-      seterrorMessage(error.message)
-      setloading(false)
+      dispatch(singInFailuar(error.message))
     }
   }
   
