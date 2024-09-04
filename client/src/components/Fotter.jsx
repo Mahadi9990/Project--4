@@ -8,18 +8,10 @@ export default function Fotter() {
         <div className="grid md:grid-cols-2 w-full justify-between sm:flex">
         {/* grid w-full justify-between sm:flex md:grid-clos-2 */}
             <div className="py-3">
-              <Link to='/' className='
-              rounded-lg 
-              bg-gradient-to-l
-          from-indigo-500
-          via-purple-500
-          to-pink-500
-          text-white
-            text-2xl
-            font-bold
-            py-2 pl-2
-                '>
-              Shafayat <span className='ml-1 text-black dark:text-white bg-gray-100 py-4'>blog</span>
+            <Link className='
+          self-center whitespace-nowrap text-sm md:text-xl font-semibold dark:text-white
+          '>
+            <span className='py-1 px-2 rounded-lg text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 '>Shafayat</span>Blog
           </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 mt-5">

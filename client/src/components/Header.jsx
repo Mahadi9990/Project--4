@@ -1,29 +1,24 @@
 import {Avatar, Button, Dropdown, Navbar, TextInput} from 'flowbite-react'
 import { Link ,useLocation} from 'react-router-dom'
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaSun } from "react-icons/fa";
 import { FaMoon } from "react-icons/fa6";
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
+import { toggoleTheme } from '../redux/theme/ThemeSlice';
 
 
 
 export default function Header() {
+    const dispatch =useDispatch()
     const {currentUser} =useSelector((state)=>state.user)
+    const {theme} =useSelector((state)=>state.theme)
     const path =useLocation().pathname
   return (
     <Navbar className='flex flex-row gap-2'>
-        <Link to='/' className='
-            rounded-lg 
-            bg-gradient-to-l
-         from-indigo-500
-         via-purple-500
-         to-pink-500
-         text-white
-           text-3xl
-           font-bold
-           py-2 pl-2
-              '>
-            Shafayat <span className='ml-1 text-black dark:text-white bg-gray-100 py-4'>blog</span>
-        </Link>
+        <Link className='
+          self-center whitespace-nowrap text-sm md:text-xl font-semibold dark:text-white
+          '>
+            <span className='py-1 px-2 rounded-lg text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 '>Shafayat</span>Blog
+          </Link>
         <form>
             <TextInput
                 placeholder='Search...'
@@ -33,7 +28,9 @@ export default function Header() {
            <Link to='/search'> <Button color='gray' className='md:hidden inline'><FaSearch/></Button></Link>
         </form>
         <div className="flex justify-center items-center gap-2 md:order-2">
-            <Button color='gray' pill className='w-12 h-10'><FaMoon/></Button>
+            <Button color='gray' pill className='w-12 h-10' onClick={()=> dispatch(toggoleTheme())}>
+                {theme=== 'light'?<FaMoon/>:<FaSun/>}
+            </Button>
             {currentUser?(
                 <Dropdown
                     arrowIcon={false}
