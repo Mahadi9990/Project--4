@@ -5,7 +5,6 @@ import Outh from '../components/Outh';
 import { useDispatch } from 'react-redux'
 import { singInStart,singInSuccess,singInFailuar } from '../redux/user/userSlice';
 
-
 export default function Singin() {
   const dispatch =useDispatch()
   const [formData, setformData] = useState({});

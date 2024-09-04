@@ -6,6 +6,8 @@ import SingIn from './pages/SingIn'
 import Singup from './pages/Singup'
 import Header from './components/Header'
 import Fotter from './components/Fotter'
+import PrivateRoute from './components/PrivateRoute'
+import Dashboard from './pages/Dashboard'
 
 
 export default function App() {
@@ -13,6 +15,9 @@ export default function App() {
     <BrowserRouter>
     <Header/>
     <Routes>
+      <Route element={<PrivateRoute/>}>
+        <Route path='/dashboard' element={<Dashboard/>}/>
+      </Route>
       <Route path='/' element={<Home/>}/>
       <Route path='/project' element={<Project/>}/>
       <Route path='/about' element={<About/>}/>
