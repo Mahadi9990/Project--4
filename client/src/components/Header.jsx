@@ -1,9 +1,9 @@
 import {Avatar, Button, Dropdown, Navbar, TextInput} from 'flowbite-react'
 import { Link ,useLocation} from 'react-router-dom'
-import { FaSearch, FaSun } from "react-icons/fa";
+import { FaSearch, FaSun  } from "react-icons/fa";
 import { FaMoon } from "react-icons/fa6";
 import { useSelector,useDispatch } from 'react-redux';
-import { toggoleTheme } from '../redux/theme/ThemeSlice';
+import { themeToggle } from '../redux/theme/ThemeSlice';
 
 
 
@@ -28,8 +28,8 @@ export default function Header() {
            <Link to='/search'> <Button color='gray' className='md:hidden inline'><FaSearch/></Button></Link>
         </form>
         <div className="flex justify-center items-center gap-2 md:order-2">
-            <Button color='gray' pill className='w-12 h-10' onClick={()=> dispatch(toggoleTheme())}>
-                {theme=== 'light'?<FaMoon/>:<FaSun/>}
+            <Button color='gray' pill className='w-12 h-10' onClick={()=>dispatch(themeToggle())}>
+                {theme === 'light'?<FaMoon/>:<FaSun/>}
             </Button>
             {currentUser?(
                 <Dropdown

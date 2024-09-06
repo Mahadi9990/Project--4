@@ -49,3 +49,37 @@ export const singin =async(req,res,next)=>{
     .cookie("access_token",token,{httpOnly:true})
     .json(rest)
 }
+
+
+
+export const google = async (req, res, next) => {
+    const {email,name,image} =req.body
+    try {
+        const user =await User.findOne({email})
+        if(user){
+            const token =jwt.sing({id:user._id},process.env.JWTOKEN)
+            const {password:pass,...rest} =user._doc
+            res.cookie('access_token',token,{httpOnly:true})
+            .status(200)
+            .json(rest)
+        }else{
+            const generatePassword =Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8)
+            const hashPassword =bcryptjs.hashSync(generatePassword,10)
+            const newUser =new User({
+                userName:name.toLowerCase().split(" ").join("") + Math.random().toString(9).slice(-4),
+                email:email,
+                password:hashPassword,
+                avater:image
+
+            })
+            await newUser.save()
+            const {password:pass,...rest} =newUser._doc
+            const token =jwt.sign({id:newUser._id},process.env.JWTOKEN)
+            res.cookie("access_token",token,{httpOnly:true})
+            .status(200)
+            .json(rest)
+        }
+    } catch (error) {
+        next(error)
+    }
+}
