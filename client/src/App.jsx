@@ -8,6 +8,7 @@ import Header from './components/Header'
 import Fotter from './components/Fotter'
 import PrivateRoute from './components/PrivateRoute'
 import Dashboard from './pages/Dashboard'
+import CreatPost from './pages/CreatPost'
 
 
 export default function App() {
@@ -17,12 +18,15 @@ export default function App() {
     <Routes>
       <Route element={<PrivateRoute/>}>
         <Route path='/dashboard' element={<Dashboard/>}/>
+
       </Route>
       <Route path='/' element={<Home/>}/>
       <Route path='/project' element={<Project/>}/>
       <Route path='/about' element={<About/>}/>
       <Route path='/sing-in' element={<SingIn/>}/>
       <Route path='/sing-up' element={<Singup/>}/>
+      <Route path='/create-post' element={<CreatPost
+      />}/>
     </Routes>
     <Fotter/>
     </BrowserRouter>

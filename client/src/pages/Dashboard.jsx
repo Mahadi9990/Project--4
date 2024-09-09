@@ -19,7 +19,7 @@ export default function Dashboard() {
   return (
     <div className='md:flex gap-2 items-start flex-row w-full'>
       {/* Dashsidebar  */}
-      <DashSidebar className='w-full'/>
+      <DashSidebar/>
       {/* Profile Area */}
       {
         tab === 'profile'&& <DashProfile/>

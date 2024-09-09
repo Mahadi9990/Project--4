@@ -13,27 +13,27 @@ export default function DashSidebar() {
       }
   }, [location.search]);
   return (
-    <Sidebar className='p-2'>
+    <Sidebar className='w-full md:w-56'>
       <Sidebar.Items>
-        <Sidebar.ItemGroup className='w-full md:w-56'>
+        <Sidebar.ItemGroup >
           <Link to={'/dashboard?tab=profile'}>
-          <Sidebar.Item className='my-2' active={ tab === 'profile'} label={'User'} labelColor='dark'icon={HiSupport}>
+          <Sidebar.Item as='div' className='my-2' active={ tab === 'profile'} label={'User'} labelColor='dark'icon={HiSupport}>
             Profile
           </Sidebar.Item>
           </Link>
 
           <Link to={'/dashboard?tab=post'}>
-          <Sidebar.Item className='my-2' active={ tab === 'post'}  icon={HiOutlinePresentationChartBar}>
+          <Sidebar.Item as='div' className='my-2' active={ tab === 'post'}  icon={HiOutlinePresentationChartBar}>
             Post
           </Sidebar.Item>
           </Link>
           <Link to={'/dashboard?tab=comment'}>
-            <Sidebar.Item className='my-2' active={ tab === 'comment'}  icon={HiDocumentRemove}>
+            <Sidebar.Item as='div' className='my-2' active={ tab === 'comment'}  icon={HiDocumentRemove}>
               comment
             </Sidebar.Item>
           </Link>
           <Link to={'/dashboard?tab=user'}>
-          <Sidebar.Item className='my-2' active={ tab === 'user'} icon={HiUser}>
+          <Sidebar.Item as='div' className='my-2' active={ tab === 'user'} icon={HiUser}>
             User
           </Sidebar.Item>
           </Link>
