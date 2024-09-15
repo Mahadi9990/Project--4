@@ -84,50 +84,6 @@ export const google = async (req, res, next) => {
     }
 }
 
-// export const update =async(req,res,next)=>{
-//     if(req.user.id !== req.params.userId){
-//         return next(errorHandler(401,'You are not allowed to update this user'))
-//     }
-//     if(req.body.password){
-//         if(req.body.password < 6){
-//             return next(errorHandler(402,"password need Bigger then 6 character"))
-//         }
-//         req.body.password =bcryptjs.hashSync(req.body.password,10)
-//     }
-//     if(req.body.userName){
-//         if(req.body.userName.length < 5 || req.body.userName.length > 20){
-//             return next(errorHandler(402,"User name is less then 5 words and getter then 20 words"))
-//         }
-//         if(req.body.userName.includes(' ')){
-//             return next(errorHandler(402,"Space in not allow in userName"))
-//         }
-//         if(req.body.userName  !== req.body.userName.toLowerCase()){
-//             return next(errorHandler(402,"userName must be lowercase"))
-//         }
-//         if(!req.body.userName.match(/^[a-zA-Z0-9]+$/)){
-//             return next(errorHandler(402,"userName must be lowercase"))
-//         }
-//     }
-//         try {
-//             const updateUser =await User.findByIdAndUpdate(req.params.userId,
-//                 {
-//                     $set: {
-//                         userName: req.body.userName,
-//                         email: req.body.email,
-//                         password: req.body.password,
-//                         avater:req.body.avater
-//                     },
-//                 },
-//                 { new: true }
-            
-//             )
-//             const {password:pass,...rest} =updateUser._doc
-//             res.status(200).json(rest)
-//         } catch (error) {
-//             next(error)
-//         }
-    
-// }
 
 export const update =async(req,res,next)=>{
     if(req.user.id !== req.params.userId){
@@ -169,6 +125,19 @@ export const update =async(req,res,next)=>{
         },{new:true})
         const {password:pass,...rest} =updateUser._doc
         res.status(200).json(rest)
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+export const deleteUser =async(req,res,next)=>{
+    if(!req.user.userId && req.user.id !== req.params.userId){
+        return next(errorHandler(401,'you are not allow to delete this account'))
+    }
+    try {
+        await User.findByIdAndDelete(req.params.userId)
+        res.status(200).json("user has been deleted")
     } catch (error) {
         next(error)
     }
