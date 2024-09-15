@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {BsDribbble, BsFacebook, BsInstagram, BsTwitter, BsYoutube } from 'react-icons/bs'
 export default function Fotter() {
   return (
-    <Footer container className='border border-t-8 border-teal-500'>
+    <Footer container className='border border-t-8 border-teal-500 mt-5'>
       <div className="w-full mx-auto max-w-7xl">
         <div className="grid md:grid-cols-2 w-full justify-between sm:flex">
         {/* grid w-full justify-between sm:flex md:grid-clos-2 */}

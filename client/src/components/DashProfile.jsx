@@ -1,119 +1,188 @@
-import { Alert, Button, TextInput } from "flowbite-react"
-import { useState,useRef, useEffect } from "react";
-import { useSelector } from "react-redux"
-import { Link } from "react-router-dom"
-import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
+
+
+
+import {Alert, Button, TextInput} from 'flowbite-react'
+import { useState ,useRef, useEffect } from 'react';
+import {useDispatch, useSelector} from 'react-redux'
+import {Link} from 'react-router-dom'
+import {getDownloadURL, getStorage, uploadBytesResumable,ref} from 'firebase/storage'
 import {app} from '../firebase.js'
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { updateStart,updateSuccess,updateFailure } from '../redux/user/userSlice.js';
+
 export default function DashProfile() {
-  const {currentUser} =useSelector((state)=>state.user)
-  const [fromData, setfromData] = useState({});
-  const [imageFile, setimageFile] = useState(null);
-  const [imageFileUrl, setimageFileUrl] = useState(null);
-  const [imgeFileUploadError, setimgeFileUploadError] = useState(null);
-  const [imageUploadingProgress, setimageUploadingProgress] = useState(null);
-  const [imageUploadSuccess, setimageUploadSuccess] =useState(null)
+  const fileRef =useRef()
+  const {currentUser,loading} =useSelector((state)=>state.user)
+  const [formData, setformData] = useState({});
+  const [image, setimage] = useState(null);
+  const [imageUrl, setimageUrl] = useState(null);
   const [imageUploading, setimageUploading] = useState(null);
-  console.log(imageUploadingProgress)
-  console.log(fromData)
+  const [imageUploadingError, setimageUploadingError] = useState(null);
+  const [imageUploadingProgress, setimageUploadingProgress] = useState(null);
+  const [userUpdatSuccess, setuserUpdatSuccess] = useState(null);
+  const [userUpdataError, setuserUpdataError] = useState(null);
+  const dispatch =useDispatch()
 
-  const filePickerRef =useRef()
-  const handleChange =(e)=>{
-    setfromData({...fromData,[e.target.id]:e.target.value})
-  }
-const handleImageChange =(e)=>{
-  const file = e.target.files[0]
-  if(file){
-    setimageFile(file)
-    setimageFileUrl(URL.createObjectURL(file))
-  }
-}
-useEffect(() => {
-  if(imageFile){
-    uploadImage()
-  }
-}, [imageFile]);
+  const handleImageChange =(e)=>{
+      const file = e.target.files[0]
+      if(file){
+        setimage(file)
+       setimageUrl(URL.createObjectURL(file))
+      }
+    }
 
-const uploadImage =async()=>{
-  // allow read;
-  // allow write: if
-  // request.resource.size < 2 * 1024 * 1024 &&
-  // request.resource.contentType.matches('image/.*')
-  setimageUploading(true)
-  setimgeFileUploadError(null)
-  const storage =getStorage(app)
-  const fileName = new Date().getTime() + imageFile.name
-  const storageRef =ref(storage,fileName)
-  const uploadTask =uploadBytesResumable(storageRef,imageFile)
-  uploadTask.on('state_changed',
-    (snapsort) => {
-      setimgeFileUploadError(null)
-      setimageUploadSuccess(null)
-      const progress =(snapsort.bytesTransferred / snapsort.totalBytes)* 100
-      setimageUploadingProgress(progress.toFixed(0))
-  },
-  (error)=>{
-    setimgeFileUploadError("conn't upload Image file must be 2mb")
-    setimageFile(null)
-    setimageFileUrl(null)
-    setimageUploadingProgress(null)
-    setimageUploading(null)
-  },
-  ()=>{
-    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL)=>{
-      setimageFileUrl(downloadURL)
-      setfromData({...fromData,avater:downloadURL})
-      setimageUploadingProgress(null)
-      setimageUploading(false)
-    })
+  useEffect(() => {
+    if(image){
+      upoading()
+    }
+  }, [image]);
+  const upoading =async()=>{
+    setimageUploading(true)
+    setimageUploadingError(null)
+    const storage =getStorage(app)
+    const fileName =new Date().getTime()+image.name
+    const storageRef=ref(storage,fileName)
+    const uploadTask=uploadBytesResumable(storageRef,image)
+    uploadTask.on('state_changed',
+      (snapshot)=>{
+        setimageUploadingError(null)
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes)*100
+        setimageUploadingProgress(progress.toFixed(0))
+      },(error)=>{
+        setimageUploadingError("image upload less than 2mb")
+        setimage(null)
+        setimageUrl(null)
+        setimageUploading(false)
+        setimageUploadingProgress(null)
+      },
+    ()=>{
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL)=>{
+        setimageUrl(downloadURL)
+        setformData({...formData,avater:downloadURL})
+        setimageUploadingProgress(null)
+        setimageUploading(false)
+      })
+    }
+
+  
+  )
   }
-)
+
+const handChamge =(e)=>{
+  setformData({...formData,[e.target.id]:e.target.value})
 }
+
+const handleSubmit = async (e) => {
+    e.preventDefault()
+    setuserUpdataError(null)
+    setuserUpdatSuccess(null)
+    if (Object.keys(formData).length === 0) {
+      setuserUpdataError('No change made')
+      return
+    }
+    if (imageUploading) {
+      setuserUpdataError('Please wait image for upload')
+      return
+    }
+    try {
+      dispatch(updateStart())
+      const res = await fetch(`/api/user/update/${currentUser._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify(formData)
+        })
+      const data = await res.json()
+      if (!res.ok) {
+        dispatch(updateFailure(data.message))
+        setuserUpdataError(data.message)
+      } else {
+        dispatch(updateSuccess(data))
+        setuserUpdatSuccess("User update successfully")
+      }
+    } catch (error) {
+      dispatch(updateFailure(error.message))
+      setuserUpdataError(error.message)
+    }
+  }
 
   return (
-    <div className='mx-auto p-2 mb-4'>
-      <h1 className='text-center mb-4'>Profile</h1>
-      <form className="flex flex-col gap-2 justify-center items-center w-[400px]">
-        <input onChange={handleImageChange} type="file" accept="image/*" ref={filePickerRef} hidden/>
-        <div className="" onClick={()=>filePickerRef.current.click()}>
-          <img src={imageFileUrl || currentUser.avater} alt="" className="w-32 h-32 rounded-full"/>
+    <div className='mx-auto'>
+      <h2 className='p-3 text-center font-semibold'>Profile</h2>
+      <form onSubmit={handleSubmit} className='flex justify-center items-center flex-col gap-3 w-[500px]'>
+        <div className="w-32 h-32 relative">
+        <input hidden onChange={handleImageChange} type="file" accept="image/*" ref={fileRef} />
+        {imageUploadingProgress && (
+            <CircularProgressbar
+            value={imageUploadingProgress || 0}
+            text={`${imageUploadingProgress}%`}
+            strokeWidth={5}
+            styles={{
+              root: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%'
+              },
+              path: {
+                stroke:`rgba(62,152,199,${imageUploadingProgress /100})`
+              }
+            }}
+          />
+          )}
+          <img
+           onClick={()=>fileRef.current.click()} src={imageUrl ||currentUser.avater} alt="" 
+           className={`border-8 w-32 h-32 rounded-full ${imageUploadingProgress && imageUploadingProgress < 100 && 'opacity-55'}`}/>
         </div>
-        {imgeFileUploadError && (
-          <Alert color='failure' className="w-full">
-            {imgeFileUploadError}
-          </Alert>
-        )}
+        {imageUploadingError && (<Alert color='failure'>
+          {imageUploadingError}
+        </Alert>)}
         <TextInput
-          id="userName"
-          className="w-full"
+          id='userName'
+          type='text'
           defaultValue={currentUser.userName}
-          type="text"
-          onChange={handleChange}
+          className='w-full'
+          onChange={handChamge}
         />
         <TextInput
-          id="email"
-          className="w-full"
+          id='email'
+          type='email'
           defaultValue={currentUser.email}
-          type="email"
-          onChange={handleChange}
-
+          className='w-full'
+          onChange={handChamge}
         />
         <TextInput
-          id="password"
-          className="w-full"
-          placeholder="************"
-          type="password"
-          onChange={handleChange}
+          id='password'
+          type='password'
+          placeholder='*************'
+          className='w-full'
+          onChange={handChamge}
         />
-        <Button type="submit" gradientDuoTone='purpleToPink' className="w-full">Update</Button>
-        <Link to={'/create-post'} >
-          <Button type='button' gradientDuoTone='purpleToBlue' outline className="w-[400px]">Create List</Button>
-        </Link>
+        <Button className='w-full' type='submit' gradientDuoTone="purpleToPink" disabled={loading || imageUploading}>
+          {loading ? 'loading...':"Update"}
+        </Button>
+        {currentUser.isAdmin && (
+          <Link to={'/create-post'} >
+            <Button  className='w-[500px]' gradientDuoTone='purpleToBlue' outline>
+              Create Post
+            </Button>
+          </Link>
+        )}
       </form>
-        <div className="flex justify-between gap-2 mt-2">
-        <span className="text-red-500 font-semibold">Delete</span>
-        <span className="text-red-400 font-semibold">Sing Out</span>
-        </div>
-      
+      <div className="flex justify-between mt-5">
+        <span className='text-red-400 font-semibold cursor-pointer'>Delete Account</span>
+        <span className='text-red-700 font-semibold cursor-pointer'>Sing Out</span>
+      </div>
+      {userUpdataError && (<Alert className='my-2'color='failure'>
+        {userUpdataError}
+      </Alert>)}
+      {userUpdatSuccess && (<Alert className='my-2'color='success'>
+        {userUpdatSuccess}
+      </Alert>)}
     </div>
   )
 }

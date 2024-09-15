@@ -33,11 +33,14 @@ export default function Singin() {
 
       const data = await res.json()
       
-      if (data.success === false) {
+      if (!res.ok) {
         dispatch(singInFailuar(data.message))
+        seterrorMessage(data.message)
       }
-      dispatch(singInSuccess(data))
-      navigate('/')
+      if(res.ok){
+        dispatch(singInSuccess(data))
+        navigate('/')
+      }
       
     } catch (error) {
       dispatch(singInFailuar(error.message))
