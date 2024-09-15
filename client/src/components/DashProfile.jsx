@@ -15,7 +15,9 @@ import {
   updateFailure,
   deleteUserStart,
   deleteUserSuccess,
-  deleteUserFailuar 
+  deleteUserFailuar,
+  singoutUserSuccess,
+  singoutUserFailuar
 } from '../redux/user/userSlice.js';
 
 export default function DashProfile() {
@@ -118,21 +120,7 @@ const handleSubmit = async (e) => {
   }
 
   const handleDelete = async () => {
-    // setshowModle(false)
-    // try {
-    //   dispatch(deleteUserStart())
-    //   const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-    //     method:'delete'
-    //   })
-    //   const data = await res.json()
-    //   if (!res.ok) {
-    //     dispatch(deleteUserFailuar(data.message))
-    //   } else {
-    //     dispatch(deleteUserSuccess(data))
-    //   }
-    // } catch (error) {
-    //   dispatch(deleteUserFailuar(error.message))
-    // }
+
     setshowModle(false)
     try {
       dispatch(deleteUserStart())
@@ -150,6 +138,21 @@ const handleSubmit = async (e) => {
     }
 }
 
+const userSingout = async () => {
+  try {
+    const res = await fetch(`/api/user/singout`, {
+      method:'POST'
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      dispatch(singoutUserFailuar(data.message))
+    } else {
+      dispatch(singoutUserSuccess(data))
+    }
+  } catch (error) {
+    dispatch(singoutUserFailuar(error.message))
+  }
+}
 
   return (
     <div className='mx-auto'>
@@ -180,7 +183,7 @@ const handleSubmit = async (e) => {
            onClick={()=>fileRef.current.click()} src={imageUrl ||currentUser.avater} alt="" 
            className={`border-8 w-32 h-32 rounded-full ${imageUploadingProgress && imageUploadingProgress < 100 && 'opacity-55'}`}/>
         </div>
-        {imageUploadingError && (<Alert color='failure'>
+        {imageUploadingError && (<Alert className='items-center' color='failure'>
           {imageUploadingError}
         </Alert>)}
         <TextInput
@@ -217,12 +220,12 @@ const handleSubmit = async (e) => {
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={()=>setshowModle(true)} className='text-red-400 font-semibold cursor-pointer'>Delete Account</span>
-        <span className='text-red-700 font-semibold cursor-pointer'>Sing Out</span>
+        <span onClick={userSingout} className='text-red-700 font-semibold cursor-pointer'>Sing Out</span>
       </div>
-      {userUpdataError && (<Alert className='my-2'color='failure'>
+      {userUpdataError && (<Alert className='my-2 items-center'color='failure'>
         {userUpdataError}
       </Alert>)}
-      {userUpdatSuccess && (<Alert className='my-2'color='success'>
+      {userUpdatSuccess && (<Alert className='my-2 items-center'color='success'>
         {userUpdatSuccess}
       </Alert>)}
     <Modal show={showModle} onClose={()=>setshowModle(false)} size='md' popup>

@@ -3,6 +3,7 @@ import {errorHandler} from '../utils/error.js'
 import bcryptjs from 'bcryptjs'
 import User from '../model/userModel.js'
 import jwt from 'jsonwebtoken'
+import { json } from 'express'
 
 export const singup =async(req,res,next)=>{
     const {userName,email,password} =req.body
@@ -142,4 +143,15 @@ export const deleteUser =async(req,res,next)=>{
         next(error)
     }
 
+}
+
+export const singOut =async(req,res,next)=>{
+    try {
+        res
+        .clearCookie('access_token')
+        .status(200)
+        .json("user has been singout")
+    } catch (error) {
+        next(error)
+    }
 }
