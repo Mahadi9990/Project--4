@@ -2,7 +2,14 @@ import {Sidebar} from 'flowbite-react'
 import { useEffect, useState } from 'react';
 import { HiUser, HiArrowSmRight, HiOutlinePresentationChartBar, HiDocumentRemove, HiSupport } from 'react-icons/hi'
 import {Link, useLocation} from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { 
+  
+  singoutUserSuccess,
+  singoutUserFailuar
+} from '../redux/user/userSlice.js';
 export default function DashSidebar() {
+  const dispatch =useDispatch()
   const [tab, settab] = useState('');
   const location =useLocation()
   useEffect(() => {
@@ -12,6 +19,22 @@ export default function DashSidebar() {
         settab(serachParams)
       }
   }, [location.search]);
+  
+const userSingout = async () => {
+  try {
+    const res = await fetch(`/api/user/singout`, {
+      method:'POST'
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      dispatch(singoutUserFailuar(data.message))
+    } else {
+      dispatch(singoutUserSuccess(data))
+    }
+  } catch (error) {
+    dispatch(singoutUserFailuar(error.message))
+  }
+}
   return (
     <Sidebar className='w-full md:w-56'>
       <Sidebar.Items>
@@ -37,7 +60,7 @@ export default function DashSidebar() {
             User
           </Sidebar.Item>
           </Link>
-          <Sidebar.Item icon={HiArrowSmRight}>
+          <Sidebar.Item onClick={userSingout} icon={HiArrowSmRight}>
             Sing Out
           </Sidebar.Item>
         </Sidebar.ItemGroup>

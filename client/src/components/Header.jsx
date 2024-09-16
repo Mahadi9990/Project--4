@@ -4,6 +4,11 @@ import { FaSearch, FaSun  } from "react-icons/fa";
 import { FaMoon } from "react-icons/fa6";
 import { useSelector,useDispatch } from 'react-redux';
 import { themeToggle } from '../redux/theme/ThemeSlice';
+import { 
+  
+    singoutUserSuccess,
+    singoutUserFailuar
+  } from '../redux/user/userSlice.js';
 
 
 
@@ -12,6 +17,22 @@ export default function Header() {
     const {currentUser} =useSelector((state)=>state.user)
     const {theme} =useSelector((state)=>state.theme)
     const path =useLocation().pathname
+    
+const userSingout = async () => {
+    try {
+      const res = await fetch(`/api/user/singout`, {
+        method:'POST'
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        dispatch(singoutUserFailuar(data.message))
+      } else {
+        dispatch(singoutUserSuccess(data))
+      }
+    } catch (error) {
+      dispatch(singoutUserFailuar(error.message))
+    }
+  }
   return (
     <Navbar className='flex flex-row gap-2'>
         <Link className='
@@ -52,7 +73,7 @@ export default function Header() {
                             Profile
                         </Dropdown.Item>
                     </Link>
-                    <Dropdown.Item>
+                    <Dropdown.Item onClick={userSingout}>
                         Sing Out
                     </Dropdown.Item>
                 </Dropdown>

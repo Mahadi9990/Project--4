@@ -7,6 +7,7 @@ import Singup from './pages/Singup'
 import Header from './components/Header'
 import Fotter from './components/Fotter'
 import PrivateRoute from './components/PrivateRoute'
+import AdminPrivateRoute from './components/AdminPrivateRoute'
 import Dashboard from './pages/Dashboard'
 import CreatPost from './pages/CreatPost'
 
@@ -18,7 +19,9 @@ export default function App() {
     <Routes>
       <Route element={<PrivateRoute/>}>
         <Route path='/dashboard' element={<Dashboard/>}/>
-
+      </Route>
+      <Route element={<AdminPrivateRoute/>}>
+        <Route path='/create-post' element={<CreatPost/>}/>
       </Route>
       <Route path='/' element={<Home/>}/>
       <Route path='/project' element={<Project/>}/>
